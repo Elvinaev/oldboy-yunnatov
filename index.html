@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <title>OldBoy Юннатов — Оставить отзыв</title>
+  <title>OldBoy Юннатов — Обратная связь</title>
 
   <style>
     * {
@@ -27,7 +27,6 @@
       width: 100%;
       max-width: 430px;
       text-align: center;
-    
     }
 
     .logo {
@@ -40,7 +39,7 @@
     .address {
       color: #a5a5a5;
       font-size: 15px;
-      margin-bottom: 45px;
+      margin-bottom: 42px;
     }
 
     h1 {
@@ -52,19 +51,42 @@
       color: #bdbdbd;
       font-size: 16px;
       line-height: 1.5;
-      margin-bottom: 30px;
+      margin-bottom: 28px;
+    }
+
+    .stars {
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+      margin: 20px 0 30px;
+    }
+
+    .star {
+      border: 0;
+      background: transparent;
+      color: #555;
+      font-size: 42px;
+      cursor: pointer;
+      padding: 0;
+      transition: 0.15s;
+    }
+
+    .star.active {
+      color: #ffffff;
+      transform: scale(1.08);
     }
 
     .button {
       display: block;
       width: 100%;
-      padding: 18px 20px;
+      padding: 17px 20px;
       margin: 15px 0;
       border-radius: 12px;
+      border: 0;
       text-decoration: none;
-      font-size: 18px;
+      font-size: 17px;
       font-weight: 700;
-      transition: 0.2s;
+      cursor: pointer;
     }
 
     .button:active {
@@ -81,9 +103,55 @@
       color: #ffffff;
     }
 
+    textarea {
+      width: 100%;
+      min-height: 130px;
+      resize: vertical;
+      border: 1px solid #333;
+      border-radius: 12px;
+      background: #1b1b1b;
+      color: #ffffff;
+      padding: 15px;
+      font-family: inherit;
+      font-size: 16px;
+      outline: none;
+      margin: 10px 0 12px;
+    }
+
+    textarea:focus {
+      border-color: #777;
+    }
+
+    .submit {
+      background: #ffffff;
+      color: #111111;
+    }
+
+    .back {
+      background: transparent;
+      color: #999999;
+      font-weight: 500;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    .message {
+      color: #bdbdbd;
+      font-size: 16px;
+      line-height: 1.6;
+      margin: 25px 0;
+    }
+
+    .success-icon {
+      font-size: 48px;
+      margin-bottom: 15px;
+    }
+
     .footer {
-      margin-top: 35px;
-      color: #777777;
+      margin-top: 30px;
+      color: #666666;
       font-size: 13px;
     }
   </style>
@@ -91,19 +159,44 @@
 
 <body>
 
-  <div class="container">
+<div class="container">
 
-    <div class="logo">OldBoy</div>
+  <div class="logo">OldBoy</div>
 
-    <div class="address">
-      Юннатов, 4Г · Москва
-    </div>
+  <div class="address">
+    Юннатов, 4Г · Москва
+  </div>
+
+  <!-- ЭКРАН 1 -->
+  <div id="ratingScreen">
 
     <h1>Нам важно ваше мнение ❤️</h1>
 
     <div class="subtitle">
       Спасибо, что посетили OldBoy Юннатов!<br>
-      Пожалуйста, оставьте отзыв о вашем визите.
+      Оцените, пожалуйста, ваш визит.
+    </div>
+
+    <div class="stars">
+      <button class="star" data-rating="1">★</button>
+      <button class="star" data-rating="2">★</button>
+      <button class="star" data-rating="3">★</button>
+      <button class="star" data-rating="4">★</button>
+      <button class="star" data-rating="5">★</button>
+    </div>
+
+  </div>
+
+
+  <!-- ЭКРАН 2 — ХОРОШАЯ ОЦЕНКА -->
+
+  <div id="goodScreen" class="hidden">
+
+    <h1>Спасибо! ❤️</h1>
+
+    <div class="message">
+      Очень рады, что вам всё понравилось!<br><br>
+      Будем благодарны, если поделитесь впечатлением с другими гостями.
     </div>
 
     <a
@@ -122,11 +215,136 @@
       📍 Оставить отзыв в 2ГИС
     </a>
 
-    <div class="footer">
-      Спасибо, что выбираете OldBoy Юннатов ✂️
+  </div>
+
+
+  <!-- ЭКРАН 3 — НЕГАТИВНАЯ ОБРАТНАЯ СВЯЗЬ -->
+
+  <div id="badScreen" class="hidden">
+
+    <h1>Спасибо за обратную связь</h1>
+
+    <div class="message">
+      Нам важно понять, что именно пошло не так.<br>
+      Напишите, пожалуйста, несколько слов — это поможет нам разобраться в ситуации.
+    </div>
+
+    <textarea
+      id="comment"
+      placeholder="Что вам не понравилось?"
+    ></textarea>
+
+    <button
+      class="button submit"
+      onclick="sendFeedback()"
+    >
+      Отправить обратную связь
+    </button>
+
+    <button
+      class="button back"
+      onclick="goBack()"
+    >
+      ← Изменить оценку
+    </button>
+
+  </div>
+
+
+  <!-- ЭКРАН 4 — ПОСЛЕ ОТПРАВКИ -->
+
+  <div id="successScreen" class="hidden">
+
+    <div class="success-icon">❤️</div>
+
+    <h1>Спасибо за обратную связь!</h1>
+
+    <div class="message">
+      Ваш комментарий уже передан управляющему.<br><br>
+      Управляющий обязательно свяжется с вами для решения данной ситуации.
     </div>
 
   </div>
+
+
+  <div class="footer">
+    Спасибо, что выбираете OldBoy Юннатов ✂️
+  </div>
+
+</div>
+
+
+<script>
+
+  let selectedRating = 0;
+
+  const stars = document.querySelectorAll(".star");
+
+  stars.forEach(star => {
+
+    star.addEventListener("click", () => {
+
+      selectedRating = Number(star.dataset.rating);
+
+      stars.forEach(s => {
+        s.classList.toggle(
+          "active",
+          Number(s.dataset.rating) <= selectedRating
+        );
+      });
+
+      setTimeout(() => {
+
+        document.getElementById("ratingScreen").classList.add("hidden");
+
+        if (selectedRating >= 4) {
+          document.getElementById("goodScreen").classList.remove("hidden");
+        } else {
+          document.getElementById("badScreen").classList.remove("hidden");
+        }
+
+      }, 250);
+
+    });
+
+  });
+
+
+  function goBack() {
+
+    document.getElementById("badScreen").classList.add("hidden");
+
+    document.getElementById("ratingScreen").classList.remove("hidden");
+
+    stars.forEach(s => {
+      s.classList.remove("active");
+    });
+
+    selectedRating = 0;
+  }
+
+
+  async function sendFeedback() {
+
+    const comment = document.getElementById("comment").value.trim();
+
+    if (!comment) {
+      alert("Пожалуйста, напишите несколько слов о вашем визите.");
+      return;
+    }
+
+    /*
+      Здесь позже подключим безопасную отправку
+      в Telegram через Cloudflare Worker.
+    */
+
+    document.getElementById("badScreen").classList.add("hidden");
+
+    document.getElementById("successScreen").classList.remove("hidden");
+
+  }
+
+</script>
 
 </body>
 </html>
