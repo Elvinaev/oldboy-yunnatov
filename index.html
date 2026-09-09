@@ -64,11 +64,17 @@
     .star {
       border: 0;
       background: transparent;
-      color: #555;
+      color: #555555;
       font-size: 42px;
       cursor: pointer;
-      padding: 0;
+      padding: 5px;
+      line-height: 1;
       transition: 0.15s;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .star:active {
+      transform: scale(0.95);
     }
 
     .star.active {
@@ -107,7 +113,7 @@
       width: 100%;
       min-height: 130px;
       resize: vertical;
-      border: 1px solid #333;
+      border: 1px solid #333333;
       border-radius: 12px;
       background: #1b1b1b;
       color: #ffffff;
@@ -119,7 +125,7 @@
     }
 
     textarea:focus {
-      border-color: #777;
+      border-color: #777777;
     }
 
     .submit {
@@ -188,11 +194,11 @@
 
     <div class="stars">
 
-      <button class="star" data-rating="1">★</button>
-      <button class="star" data-rating="2">★</button>
-      <button class="star" data-rating="3">★</button>
-      <button class="star" data-rating="4">★</button>
-      <button class="star" data-rating="5">★</button>
+      <button type="button" class="star" onclick="selectRating(1)">★</button>
+      <button type="button" class="star" onclick="selectRating(2)">★</button>
+      <button type="button" class="star" onclick="selectRating(3)">★</button>
+      <button type="button" class="star" onclick="selectRating(4)">★</button>
+      <button type="button" class="star" onclick="selectRating(5)">★</button>
 
     </div>
 
@@ -246,6 +252,7 @@
     ></textarea>
 
     <button
+      type="button"
       id="sendButton"
       class="button submit"
       onclick="sendFeedback()"
@@ -254,6 +261,7 @@
     </button>
 
     <button
+      type="button"
       class="button back"
       onclick="goBack()"
     >
@@ -297,47 +305,35 @@
 
   // Выбор оценки
 
-  stars.forEach(star => {
+  function selectRating(rating) {
 
-    star.addEventListener("click", () => {
+    selectedRating = rating;
 
-      selectedRating = Number(star.dataset.rating);
-
-      stars.forEach(s => {
-
-        s.classList.toggle(
-          "active",
-          Number(s.dataset.rating) <= selectedRating
-        );
-
-      });
-
-
-      setTimeout(() => {
-
-        document
-          .getElementById("ratingScreen")
-          .classList.add("hidden");
-
-
-        if (selectedRating >= 4) {
-
-          document
-            .getElementById("goodScreen")
-            .classList.remove("hidden");
-
-        } else {
-
-          document
-            .getElementById("badScreen")
-            .classList.remove("hidden");
-
-        }
-
-      }, 250);
-
+    stars.forEach((star, index) => {
+      star.classList.toggle("active", index < rating);
     });
 
+    setTimeout(function() {
+
+      document
+        .getElementById("ratingScreen")
+        .classList.add("hidden");
+
+      if (rating >= 4) {
+
+        document
+          .getElementById("goodScreen")
+          .classList.remove("hidden");
+
+      } else {
+
+        document
+          .getElementById("badScreen")
+          .classList.remove("hidden");
+
+      }
+
+    }, 250);
   }
 
 
@@ -349,33 +345,27 @@
       .getElementById("badScreen")
       .classList.add("hidden");
 
-
     document
       .getElementById("ratingScreen")
       .classList.remove("hidden");
-
 
     document
       .getElementById("errorMessage")
       .classList.add("hidden");
 
-
     document
       .getElementById("comment")
       .value = "";
 
-
-    stars.forEach(s => {
-      s.classList.remove("active");
+    stars.forEach(function(star) {
+      star.classList.remove("active");
     });
 
-
     selectedRating = 0;
-
   }
 
 
-  // Отправка отзыва
+  // Отправка обратной связи
 
   async function sendFeedback() {
 
@@ -384,13 +374,11 @@
       .value
       .trim();
 
-
     const errorMessage =
       document.getElementById("errorMessage");
 
     const sendButton =
       document.getElementById("sendButton");
-
 
     errorMessage.classList.add("hidden");
 
@@ -403,14 +391,10 @@
       errorMessage.classList.remove("hidden");
 
       return;
-
     }
 
 
-    // Блокируем кнопку на время отправки
-
     sendButton.disabled = true;
-
     sendButton.textContent = "Отправляем...";
 
 
@@ -437,18 +421,13 @@
 
 
       if (!response.ok || !result.success) {
-
         throw new Error("Ошибка отправки");
-
       }
 
-
-      // Всё успешно — показываем экран благодарности
 
       document
         .getElementById("badScreen")
         .classList.add("hidden");
-
 
       document
         .getElementById("successScreen")
@@ -462,12 +441,9 @@
 
       errorMessage.classList.remove("hidden");
 
-
       sendButton.disabled = false;
-
       sendButton.textContent =
         "Отправить обратную связь";
-
     }
 
   }
