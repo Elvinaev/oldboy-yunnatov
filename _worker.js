@@ -12,12 +12,10 @@ export default {
 
     // OPTIONS / CORS
     if (request.method === "OPTIONS") {
-
       return new Response(null, {
         status: 204,
         headers: corsHeaders
       });
-
     }
 
 
@@ -30,7 +28,8 @@ export default {
       return new Response(
         JSON.stringify({
           success: true,
-          message: "Feedback server is working"
+          message: "Feedback server is working",
+          telegram_token_configured: !!env.TELEGRAM_BOT_TOKEN
         }),
         {
           status: 200,
@@ -94,7 +93,7 @@ export default {
           return new Response(
             JSON.stringify({
               success: false,
-              error: "TELEGRAM_BOT_TOKEN не настроен"
+              error: "TELEGRAM_BOT_TOKEN не настроен в Cloudflare"
             }),
             {
               status: 500,
@@ -120,7 +119,7 @@ export default {
           })}`;
 
 
-        // Отправка в Telegram
+        // Telegram API
 
         const telegramUrl =
           `https://api.telegram.org/bot${env.TELEGRAM_BOT_TOKEN}/sendMessage`;
@@ -147,6 +146,8 @@ export default {
           await telegramResponse.json();
 
 
+        // ЕСЛИ TELEGRAM ОТКАЗАЛ
+
         if (
           !telegramResponse.ok ||
           !telegramData.ok
@@ -155,7 +156,8 @@ export default {
           return new Response(
             JSON.stringify({
               success: false,
-              error: "Telegram error"
+              error: telegramData.description || "Ошибка Telegram",
+              telegram_error_code: telegramData.error_code || null
             }),
             {
               status: 500,
@@ -169,7 +171,7 @@ export default {
         }
 
 
-        // Всё успешно
+        // ВСЁ УСПЕШНО
 
         return new Response(
           JSON.stringify({
@@ -184,12 +186,13 @@ export default {
           }
         );
 
+
       } catch (error) {
 
         return new Response(
           JSON.stringify({
             success: false,
-            error: "Server error"
+            error: error.message || "Server error"
           }),
           {
             status: 500,
@@ -205,7 +208,7 @@ export default {
     }
 
 
-    // Всё остальное отдаём как сайт
+    // Остальное отдаём сайту
 
     return env.ASSETS.fetch(request);
 
