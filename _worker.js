@@ -29,7 +29,8 @@ export default {
         JSON.stringify({
           success: true,
           message: "Feedback server is working",
-          telegram_token_configured: !!env.TELEGRAM_BOT_TOKEN
+          telegram_token_configured: !!env.TELEGRAM_BOT_TOKEN,
+test_variable_configured: !!env.TEST_VARIABLE
         }),
         {
           status: 200,
