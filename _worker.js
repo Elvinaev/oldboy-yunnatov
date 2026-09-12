@@ -9,7 +9,6 @@ export default {
       "Access-Control-Allow-Headers": "Content-Type"
     };
 
-
     // OPTIONS / CORS
     if (request.method === "OPTIONS") {
       return new Response(null, {
@@ -17,7 +16,6 @@ export default {
         headers: corsHeaders
       });
     }
-
 
     // ПРОВЕРКА WORKER
     if (
@@ -30,7 +28,7 @@ export default {
           success: true,
           message: "Feedback server is working",
           telegram_token_configured: !!env.TELEGRAM_BOT_TOKEN,
-test_variable_configured: !!env.TEST_VARIABLE
+          test_variable_configured: !!env.TEST_VARIABLE
         }),
         {
           status: 200,
@@ -40,9 +38,7 @@ test_variable_configured: !!env.TEST_VARIABLE
           }
         }
       );
-
     }
-
 
     // ПРИЁМ ОТЗЫВА
     if (
@@ -60,9 +56,7 @@ test_variable_configured: !!env.TEST_VARIABLE
           data.comment || ""
         ).trim();
 
-
         // Проверяем данные
-
         if (
           !rating ||
           rating < 1 ||
@@ -83,12 +77,9 @@ test_variable_configured: !!env.TEST_VARIABLE
               }
             }
           );
-
         }
 
-
         // Проверяем секрет
-
         if (!env.TELEGRAM_BOT_TOKEN) {
 
           return new Response(
@@ -104,12 +95,9 @@ test_variable_configured: !!env.TEST_VARIABLE
               }
             }
           );
-
         }
 
-
         // Сообщение для Telegram
-
         const message =
           `🚨 Новая обратная связь\n\n` +
           `OldBoy Юннатов\n` +
@@ -119,22 +107,17 @@ test_variable_configured: !!env.TEST_VARIABLE
             timeZone: "Europe/Moscow"
           })}`;
 
-
         // Telegram API
-
         const telegramUrl =
           `https://api.telegram.org/bot${env.TELEGRAM_BOT_TOKEN}/sendMessage`;
-
 
         const telegramResponse = await fetch(
           telegramUrl,
           {
             method: "POST",
-
             headers: {
               "Content-Type": "application/json"
             },
-
             body: JSON.stringify({
               chat_id: "2047866940",
               text: message
@@ -142,13 +125,10 @@ test_variable_configured: !!env.TEST_VARIABLE
           }
         );
 
-
         const telegramData =
           await telegramResponse.json();
 
-
         // ЕСЛИ TELEGRAM ОТКАЗАЛ
-
         if (
           !telegramResponse.ok ||
           !telegramData.ok
@@ -158,7 +138,8 @@ test_variable_configured: !!env.TEST_VARIABLE
             JSON.stringify({
               success: false,
               error: telegramData.description || "Ошибка Telegram",
-              telegram_error_code: telegramData.error_code || null
+              telegram_error_code:
+                telegramData.error_code || null
             }),
             {
               status: 500,
@@ -168,12 +149,9 @@ test_variable_configured: !!env.TEST_VARIABLE
               }
             }
           );
-
         }
 
-
         // ВСЁ УСПЕШНО
-
         return new Response(
           JSON.stringify({
             success: true
@@ -186,7 +164,6 @@ test_variable_configured: !!env.TEST_VARIABLE
             }
           }
         );
-
 
       } catch (error) {
 
@@ -203,15 +180,10 @@ test_variable_configured: !!env.TEST_VARIABLE
             }
           }
         );
-
       }
-
     }
 
-
     // Остальное отдаём сайту
-
     return env.ASSETS.fetch(request);
-
   }
 };
