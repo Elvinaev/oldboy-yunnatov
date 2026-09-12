@@ -56,7 +56,7 @@ export default {
           data.comment || ""
         ).trim();
 
-        // Проверяем данные
+        // ПРОВЕРКА ДАННЫХ
         if (
           !rating ||
           rating < 1 ||
@@ -79,7 +79,7 @@ export default {
           );
         }
 
-        // Проверяем секрет
+        // ПРОВЕРКА TELEGRAM SECRET
         if (!env.TELEGRAM_BOT_TOKEN) {
 
           return new Response(
@@ -97,7 +97,7 @@ export default {
           );
         }
 
-        // Сообщение для Telegram
+        // СООБЩЕНИЕ ДЛЯ TELEGRAM
         const message =
           `🚨 Новая обратная связь\n\n` +
           `OldBoy Юннатов\n` +
@@ -107,7 +107,7 @@ export default {
             timeZone: "Europe/Moscow"
           })}`;
 
-        // Telegram API
+        // TELEGRAM API
         const telegramUrl =
           `https://api.telegram.org/bot${env.TELEGRAM_BOT_TOKEN}/sendMessage`;
 
@@ -137,7 +137,9 @@ export default {
           return new Response(
             JSON.stringify({
               success: false,
-              error: telegramData.description || "Ошибка Telegram",
+              error:
+                telegramData.description ||
+                "Ошибка Telegram",
               telegram_error_code:
                 telegramData.error_code || null
             }),
@@ -151,7 +153,7 @@ export default {
           );
         }
 
-        // ВСЁ УСПЕШНО
+        // УСПЕШНАЯ ОТПРАВКА
         return new Response(
           JSON.stringify({
             success: true
@@ -170,7 +172,9 @@ export default {
         return new Response(
           JSON.stringify({
             success: false,
-            error: error.message || "Server error"
+            error:
+              error.message ||
+              "Server error"
           }),
           {
             status: 500,
@@ -183,7 +187,7 @@ export default {
       }
     }
 
-    // Остальное отдаём сайту
+    // ОСТАЛЬНОЕ ОТДАЁМ САЙТУ
     return env.ASSETS.fetch(request);
   }
 };
